@@ -1,5 +1,5 @@
-# Use the official PHP 8.3 FPM Alpine image
-FROM php:8.3.10-fpm
+# Use the official PHP 8.1 FPM image
+FROM php:8.1.29-fpm
 
 # Set working directory
 WORKDIR /var/www
@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-
 # Install Composer
 COPY --from=composer:2.7.7 /usr/bin/composer /usr/bin/composer
 
@@ -26,10 +25,10 @@ RUN chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage \
     && chmod -R 755 /var/www/bootstrap
 
-
 # Install project dependencies
 RUN composer install --optimize-autoloader --no-dev
 
+# Copy custom PHP-FPM configuration
 COPY ./custom-php-fpm.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Expose the port that the PHP server will run on
